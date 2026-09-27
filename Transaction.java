@@ -9,11 +9,13 @@ public Transaction(String type, double amount)
     this.type = type;
     this.amount = amount;
 
-    String text =Double.toString(amount);
-
-    int index = text.indexOf(".");
     
-    if(text.length()-1 - index > 2)
+    if(!type.toLowerCase().equals("deposit") &&  !type.toLowerCase().equals("transfer_out") &&  !type.toLowerCase().equals("withdrawal") )
+    {
+         throw new IllegalArgumentException("Error: Transaction can only be one of the following: Deposit, Withdrawal, Transfer_Out");
+    }
+
+    if(Math.abs(amount * 100 - Math.round(amount * 100)) > 0.0001)
     {
          throw new IllegalArgumentException("Error: Initial deposit cannot have more than 2 decimal places!");
     }
