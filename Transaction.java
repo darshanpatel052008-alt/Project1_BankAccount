@@ -35,7 +35,7 @@ public String getType()
 
  public String toString()
  {
-    return type.toUpperCase() + ":" + "$" + amount;
+    return type.toUpperCase() +  " $" + amount;
  }
 
 

@@ -16,7 +16,7 @@ public class Main {
                 // Read full line as String, then parse as integer
                 choice = Integer.parseInt(scan.nextLine().trim());
             } catch (NumberFormatException e) {
-                System.out.println("\nError: Choice must be an integer 1-7");
+                System.out.println("\nError: Choice must be an integer");
                 continue;
             }
 
@@ -25,6 +25,8 @@ public class Main {
                 case 2 -> makeDeposit();
                 case 3 -> makeWithdrawal();
                 case 4 ->  makeTransfer();
+                case 5-> transactionHistory();
+                case 6-> accountDetails();
                 case 7 -> System.out.println("Exiting program. Goodbye!");
                 default -> System.out.println("Invalid choice. Enter 1-7.");
             }
@@ -170,10 +172,52 @@ private static void makeWithdrawal() {
         System.out.println("\nSUCCESS: Transfered $" + transfer + " from " + sourceNumber + " to " + targetNumber);
     }
 
+private static <Transactions> void transactionHistory()
+{
+    System.out.print("Enter Account Number: ");
+        String accountNumber = scan.nextLine().trim();
+
+        BankAccount account = findAccount(accountNumber);
+        if (account == null) {
+            System.out.println("\nError: Can't find Account Number in the system.");
+            return;
+        }
+        System.out.println("\n=========================================");
+        System.out.println("====== Transaction History for " + accountNumber + " ======");
+        System.out.println("Account Holder: " + account.getAccountHolderName());
+
+         ArrayList<Transaction> array = account. getTransactions();
+       
+        for(int i = 1; i<=array.size(); i++)
+        {
+          System.out.println(i + ". " + array.get(i-1));
+        }
+
+    System.out.println("Current Balance: $" + account.getBalance());
+    System.out.println("=========================================");
+}
 
 
+private static void accountDetails()
+{
+    System.out.print("Enter Account Number: ");
+        String accountNumber = scan.nextLine().trim();
 
+        BankAccount account = findAccount(accountNumber);
+        if (account == null) {
+            System.out.println("\nError: Can't find Account Number in the system.");
+            return;
+        }
 
+        System.out.println("\n=========================================");
+        System.out.println("             ACCOUNT DETAILS             ");
+        System.out.println("=========================================");
+        System.out.println("Account Number: " + account.getAccountNumber());
+        System.out.println("Account Holder: " + account.getAccountHolderName());
+        System.out.println("Current Balance: $" + account.getBalance());
+        System.out.println("=========================================");
+
+}
 
 
 
