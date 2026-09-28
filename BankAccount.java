@@ -13,7 +13,7 @@ public BankAccount( String accountNumber, String accountHolderName, double balan
 
     if(Math.abs(balance * 100 - Math.round(balance * 100)) > 0.0001)
     {
-         throw new IllegalArgumentException("Error: Balance cannot have more than 2 decimal places!");
+         throw new IllegalArgumentException("Error: Deposit cannot have more than 2 decimal places!");
          
     }
     else

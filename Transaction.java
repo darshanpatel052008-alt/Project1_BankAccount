@@ -10,7 +10,7 @@ public Transaction(String type, double amount)
     this.amount = amount;
 
     
-    if(!type.toLowerCase().equals("deposit") &&  !type.toLowerCase().equals("transfer_out") &&  !type.toLowerCase().equals("withdrawal") )
+    if(!type.toLowerCase().equals("deposit:") &&  !type.toLowerCase().equals("transfer_out:") &&  !type.toLowerCase().equals("withdrawal:") )
     {
          throw new IllegalArgumentException("Error: Transaction can only be one of the following: Deposit, Withdrawal, Transfer_Out");
     }
