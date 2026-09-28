@@ -110,8 +110,8 @@ public boolean transfer(BankAccount targetAccount, double amount)
     {
         balance-=amount;
         targetAccount.balance += amount;
-        transactions.add(new Transaction("TRANSFER OUT:", amount));
-        targetAccount.transactions.add(new Transaction("TRANSFER IN:", amount));
+        transactions.add(new Transaction("TRANSFER_OUT:", amount));
+        targetAccount.transactions.add(new Transaction("TRANSFER_IN:", amount));
         return true;
     }
         

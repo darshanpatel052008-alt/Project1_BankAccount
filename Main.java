@@ -1,35 +1,33 @@
-
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class Main 
-{
-private static ArrayList<BankAccount> accounts = new ArrayList<>();
+public class Main {
+    private static ArrayList<BankAccount> accounts = new ArrayList<>();
     private static Scanner scan = new Scanner(System.in);
+
     public static void main(String[] args) {
        
+      
         int choice = 0;
 
         while (choice != 7) {
             printMenu();
             try {
-                choice = scan.nextInt();
-                }
-
-            catch (InputMismatchException e) {
-                System.out.println("\nError: Choice must be a integer 1-7");
-                scan.nextLine();
-                          
+                // Read full line as String, then parse as integer
+                choice = Integer.parseInt(scan.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("\nError: Choice must be an integer 1-7");
+                continue;
             }
 
-            switch(choice)
-            {
+            switch (choice) {
                 case 1 -> createAccount();
                 case 2 -> makeDeposit();
-                
+                case 3 -> makeWithdrawal();
+                case 4 ->  makeTransfer();
+                case 7 -> System.out.println("Exiting program. Goodbye!");
+                default -> System.out.println("Invalid choice. Enter 1-7.");
             }
-
         }
     }
 
@@ -48,78 +46,135 @@ private static ArrayList<BankAccount> accounts = new ArrayList<>();
                 "Enter choice: ");
     }
 
+    private static void createAccount() {
+        System.out.print("Enter Account Number: ");
+        String accountNumber = scan.nextLine().trim();
 
-    private static void createAccount()
-    {
-        double deposit = 0; 
-       System.out.print("Enter Account Number: ");
-       String accountNumber = scan.nextLine();
+        System.out.print("Enter Account Holder Name: ");
+        String accountHolderName = scan.nextLine().trim();
 
-       scan.nextLine();
-    
-       System.out.print("Enter Account Holder Name: ");
-       String accountHolderName = scan.nextLine();
-      
+        System.out.print("Enter Initial Deposit: ");
+        double deposit = 0;
+        try {
+            deposit = Double.parseDouble(scan.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("\nError: Initial Deposit must be a valid positive number (no units)");
+            return;
+        }
 
-       System.out.print("Enter Initial Deposit: ");
-       try
-       {
-         deposit = scan.nextDouble();
-       }
-
-         catch (InputMismatchException e) {
-                System.out.println("\nError: Initial Deposit must be a vaild positive number (no units)");
-                scan.nextLine();
-                return;
-            }
-
-       BankAccount bankAccount = new BankAccount(accountNumber, accountHolderName, deposit);
+        BankAccount bankAccount = new BankAccount(accountNumber, accountHolderName, deposit);
         accounts.add(bankAccount);
-        
-        System.out.println("\nSUCCESS: Account " + accountNumber + "created for " + accountHolderName + " with balance $" + deposit);
-    }
 
+        System.out.println("\nSUCCESS: Account " + accountNumber + " created for " + accountHolderName + " with balance $" + deposit);
+    }
 
     private static BankAccount findAccount(String accountNumber) {
-    for (BankAccount acc : accounts) {
-        if (acc.getAccountNumber().equalsIgnoreCase(accountNumber)) {
-            return acc; 
+        for (BankAccount acc : accounts) {
+            if (acc.getAccountNumber().equalsIgnoreCase(accountNumber)) {
+                return acc;
+            }
         }
-    }
-    return null;
+        return null;
     }
 
-    private static void makeDeposit()
-    {
-      double deposit = 0; 
-       System.out.print("Enter Account Number: ");
-       String accountNumber = scan.nextLine();
-       scan.nextLine();
-         
-       
-       if(findAccount(accountNumber) == null)
-       {
-        System.out.println("\nError: Can't find Account Number in the system.");
-        return;
+    private static void makeDeposit() {
+        System.out.print("Enter Account Number: ");
+        String accountNumber = scan.nextLine().trim();
 
-       }
+        BankAccount account = findAccount(accountNumber);
+        if (account == null) {
+            System.out.println("\nError: Can't find Account Number in the system.");
+            return;
+        }
 
         System.out.print("Enter Deposit: ");
-       try
-       {
-         deposit = scan.nextDouble();
-       }
+        double deposit = 0;
+        try {
+            deposit = Double.parseDouble(scan.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("\nError: Deposit must be a valid positive number (no units)");
+            return;
+        }
 
-         catch (InputMismatchException e) {
-                System.out.println("\nError: Deposit must be a vaild positive number (no units)");
-                scan.nextLine();
-                return;
-            }
-          findAccount(accountNumber).deposit(deposit);
-
-       System.out.println("\nSUCCESS: Deposited $" + deposit + " New Balance: $" + findAccount(accountNumber).getBalance());
-       
+        account.deposit(deposit);
+        System.out.println("\nSUCCESS: Deposited $" + deposit + " New Balance: $" + account.getBalance());
     }
+
+
+private static void makeWithdrawal() {
+        System.out.print("Enter Account Number: ");
+        String accountNumber = scan.nextLine().trim();
+
+        BankAccount account = findAccount(accountNumber);
+        if (account == null) {
+            System.out.println("\nError: Can't find Account Number in the system.");
+            return;
+        }
+
+        System.out.print("Enter WithDrawal Amount: ");
+        double withdrawal = 0;
+        try {
+            withdrawal = Double.parseDouble(scan.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("\nError: WithDrawal must be a valid positive number (no units)");
+            return;
+        }
+
+        boolean status = account.withdraw(withdrawal);
+       
+        if(!status)
+        {
+          System.out.println("ERROR: Transaction rejected. Insufficient funds or invalid amount!");
+          System.out.println("Current Balance: $" + account.getBalance());
+          return;
+        }
+        System.out.println("\nSUCCESS: Withdrew $" + withdrawal + " New Balance: $" + account.getBalance());
+    }
+
+  private static void makeTransfer() {
+        System.out.print("Enter Source Account Number: ");
+        String sourceNumber = scan.nextLine().trim();
+
+        BankAccount account = findAccount(sourceNumber);
+        if (account == null) {
+            System.out.println("\nError: Can't find Source Account Number in the system.");
+            return;
+        }
+
+        System.out.print("Enter Target Account Number: ");
+        String targetNumber = scan.nextLine().trim();
+
+        BankAccount account2 = findAccount(targetNumber);
+        if (account2 == null) {
+            System.out.println("\nError: Can't find Target Account Number in the system.");
+            return;
+        }
+
+        System.out.print("Enter Transfer Amount: ");
+        double transfer = 0;
+        try {
+            transfer = Double.parseDouble(scan.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("\nError: Transfer amount must be a valid positive number (no units)");
+            return;
+        }
+
+        boolean status = account.transfer(account2, transfer);
+
+        if(!status)
+        {
+             System.out.println("ERROR: Transaction rejected. Insufficient funds or invalid amount!");
+              System.out.println("Current Source Balance: $" + account.getBalance());
+
+        }
+        System.out.println("\nSUCCESS: Transfered $" + transfer + " from " + sourceNumber + " to " + targetNumber);
+    }
+
+
+
+
+
+
 
 
 
